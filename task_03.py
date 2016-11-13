@@ -19,12 +19,23 @@ class CustomLogger(object):
 
     def flush(self):
         handled = []
-
-        fhandler = open(self.logfilename, 'a')
+        try:
+            fhandler = open(self.logfilename, 'a')
+        except IOError as error:
+            self.log("target logfile cannot be opened")  
+            raise error
+                 
         for index, entry in enumerate(self.msgs):
-            fhandler.write(str(entry) + '\n')
-            handled.append(index)
-
+            try: 
+                fhandler.write(str(entry) + '\n')
+                handled.append(index)
+            except IOError as error:  
+                self.log(" cannot write to target error")
+                break
+            except:
+                
+                self.log("error")
+                continue 
         fhandler.close()
 
         for index in handled[::-1]:
